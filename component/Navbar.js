@@ -5,21 +5,22 @@ import Icon from "react-native-vector-icons/FontAwesome";
 export default function Navbar({ onBackPress, onNextPress, onHomePress }) {
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={onBackPress}>
+      {/* <TouchableOpacity onPress={onBackPress}>
         <Icon name="chevron-left" size={30} color="#fff" />
-      </TouchableOpacity>
+      </TouchableOpacity> */}
       <TouchableOpacity onPress={onHomePress}>
         <Icon name="home" size={30} color="#fff" />
       </TouchableOpacity>
-      <TouchableOpacity onPress={onNextPress}>
+      {/* <TouchableOpacity onPress={onNextPress}>
         <Icon name="chevron-right" size={30} color="#fff" />
-      </TouchableOpacity>
+      </TouchableOpacity> */}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    alignSelf:"center",
     flexDirection: "row",
     marginBottom: 10,
     marginHorizontal: 20,

@@ -1,11 +1,22 @@
-import React from "react";
-import { StyleSheet } from "react-native";
-import HomeScreen from "./component/HomeScreen"; // Import the HomeScreen component
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import HomeScreen from "./component/HomeScreen"; 
+import PlantPrefPage from "./pages/PlantPrefPage"; 
+import PlantPrefQPage from './pages/PlantPrefQPage';
 
-export default function App() {
-  return <HomeScreen />;
+const Stack = createStackNavigator();
+
+const App = () => {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen name="Home" component={HomeScreen}  options={{ headerShown: false }} />
+        <Stack.Screen name="PlantPrefPage" component={PlantPrefPage} options={{ headerShown: false }}/>
+        <Stack.Screen name="PlantPrefQPage" component={PlantPrefQPage} options={{ headerShown: false }}/>
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
 }
 
-const styles = StyleSheet.create({
-  // Your styles for App component
-});
+export default App;
