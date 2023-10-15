@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   StatusBar,
   StyleSheet,
@@ -7,11 +7,26 @@ import {
   TouchableOpacity,
   ImageBackground,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native"; 
+import { useNavigation } from "@react-navigation/native";
 import Navbar from "./Navbar";
+import database from '@react-native-firebase/database';
 
 export default function HomeScreen() {
+  const [sensorData, setSensorData] = useState(null);
   const navigation = useNavigation();
+
+  useEffect(() => {
+    const ref = database().ref('Sensor');
+
+    ref.on('value', (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        setSensorData(data);
+      }
+    });
+
+    return () => ref.off();
+  }, []);
   return (
     <ImageBackground
       source={require("../assets/home.png")}
@@ -35,11 +50,11 @@ export default function HomeScreen() {
           </View>
           <View style={styles.containerText}>
             <Text style={styles.title}>Air Quality</Text>
-            <Text style={styles.centeredText}>Temperature: 30°C</Text>
-            <Text style={styles.centeredText}>Humidity: 95%</Text>
-            <Text style={styles.centeredText}>Gas Level:</Text>
-            <Text style={styles.centeredText}>Air Quality Index:</Text>
-            <Text style={styles.result}>Air Quality is: Fresh Air</Text>
+            <Text style={styles.centeredText}>Temperature:  {sensorData.temperature}°C</Text>
+            <Text style={styles.centeredText}>Humidity:  {sensorData.humidity}%</Text>
+            <Text style={styles.centeredText}>Heat Index:{sensorData.heat_index}</Text>
+            <Text style={styles.centeredText}>Air Quality Index: {sensorData.mq135Value}</Text>
+            <Text style={styles.result}>Air Quality is:  {sensorData.quality}</Text>
           </View>
           <StatusBar style="auto" />
         </View>
