@@ -19,11 +19,11 @@ export default function HomeScreen() {
 
   useEffect(() => {
     const sensorRef = ref(db, "Sensor/");
-    onValue(sensorRef, (snapshot) =>{
+    onValue(sensorRef, (snapshot) => {
       const data = snapshot.val();
-      setSensorData(data)
-      console.log(data)
-    })
+      setSensorData(data);
+      console.log(data);
+    });
   }, []);
 
   return (
@@ -56,7 +56,7 @@ export default function HomeScreen() {
               Humidity: {sensorData && sensorData.humidity} %
             </Text>
             <Text style={styles.centeredText}>
-            Heat Index: {sensorData && sensorData.heat_index.toFixed(2)} °C
+              Heat Index: {sensorData && sensorData.heat_index.toFixed(2)} °C
             </Text>
             <Text style={styles.centeredText}>
               Air Quality Index: {sensorData && sensorData.mq135Value}
@@ -111,11 +111,10 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   containerText: {
-    flex: 1,
     justifyContent: "flex-start",
-    // alignItems: "center",
     backgroundColor: "rgba(38, 166, 91, 0.4)",
     borderRadius: 10,
+    height: "50%",
     padding: 20,
     marginTop: 10,
     width: "90%",
