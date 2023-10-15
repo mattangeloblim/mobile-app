@@ -9,24 +9,23 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import Navbar from "./Navbar";
-import database from '@react-native-firebase/database';
+// import { firebase } from "@react-native-firebase/app";
+import { db } from "../config";
+import { ref, onValue } from "firebase/database";
 
 export default function HomeScreen() {
-  const [sensorData, setSensorData] = useState(null);
+  const [sensorData, setSensorData] = useState("");
   const navigation = useNavigation();
 
   useEffect(() => {
-    const ref = database().ref('Sensor');
-
-    ref.on('value', (snapshot) => {
+    const sensorRef = ref(db, "Sensor/");
+    onValue(sensorRef, (snapshot) =>{
       const data = snapshot.val();
-      if (data) {
-        setSensorData(data);
-      }
-    });
-
-    return () => ref.off();
+      setSensorData(data)
+      console.log(data)
+    })
   }, []);
+
   return (
     <ImageBackground
       source={require("../assets/home.png")}
@@ -50,11 +49,21 @@ export default function HomeScreen() {
           </View>
           <View style={styles.containerText}>
             <Text style={styles.title}>Air Quality</Text>
-            <Text style={styles.centeredText}>Temperature:  {sensorData.temperature}°C</Text>
-            <Text style={styles.centeredText}>Humidity:  {sensorData.humidity}%</Text>
-            <Text style={styles.centeredText}>Heat Index:{sensorData.heat_index}</Text>
-            <Text style={styles.centeredText}>Air Quality Index: {sensorData.mq135Value}</Text>
-            <Text style={styles.result}>Air Quality is:  {sensorData.quality}</Text>
+            <Text style={styles.centeredText}>
+              Temperature: {sensorData && sensorData.temperature} °C
+            </Text>
+            <Text style={styles.centeredText}>
+              Humidity: {sensorData && sensorData.humidity} %
+            </Text>
+            <Text style={styles.centeredText}>
+            Heat Index: {sensorData && sensorData.heat_index.toFixed(2)} °C
+            </Text>
+            <Text style={styles.centeredText}>
+              Air Quality Index: {sensorData && sensorData.mq135Value}
+            </Text>
+            <Text style={styles.result}>
+              Air Quality is: {sensorData && sensorData.quality}
+            </Text>
           </View>
           <StatusBar style="auto" />
         </View>
