@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { View, Image, StyleSheet, Text, TouchableOpacity } from "react-native";
+import { useNavigation } from '@react-navigation/native';
 // import Navbar from "../component/Navbar";
 
 const PlantPrefQPage = () => {
+  const navigation = useNavigation();
   const [yesQ1Checked, setYesQ1Checked] = useState(false);
   const [noQ1Checked, setNoQ1Checked] = useState(false);
   const [yesQ2Checked, setYesQ2Checked] = useState(false);
@@ -13,12 +15,70 @@ const PlantPrefQPage = () => {
   const [yesQ4Checked, setYesQ4Checked] = useState(false);
   const [noQ4Checked, setNoQ4Checked] = useState(false);
 
+  const [flowers, setFlowers] = useState([]);
+
+
+  const sendPreferences = async () => {
+    const requestBody = {
+      question1: yesQ1Checked ? 1 : 0,
+      question2: yesQ2Checked ? 1 : 0,
+      question3: yesQ3Checked ? 1 : 0,
+      question4: yesQ4Checked ? 1 : 0,
+    };
+
+    try {
+      const response = await fetch("http://54.206.87.142:9001/api/preference", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestBody),
+      });
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const responseData = await response.json();
+
+      // Use the responseData as needed
+      // console.log('Response:', responseData);
+      // const plantNames = responseData.matchingFlower.map(flower => flower.name)
+      // const plantDescription = responseData.matchingFlower.map(flower => flower.description)
+      // const plantPath = responseData.matchingFlower.map(flower => flower.name)
+
+      // console.log(plantNames);
+      // console.log(plantDescription);
+      // console.log(plantPath)
+      const flowerData = responseData.matchingFlower.map(flower => {
+        return {
+          name: flower.name,
+          description: flower.description,
+          imagePath: flower.imagePath
+        };
+      });
+
+      // console.log(flowerData)
+  
+      setFlowers(flowerData);
+
+      console.log(flowers)
+
+      navigation.navigate('PlantPreferencePage', { flowers: flowerData });
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
   const [nextPage, setNextPage] = useState(false);
 
   const isBothQuestionsAnswered =
     (yesQ1Checked || noQ1Checked) && (yesQ2Checked || noQ2Checked);
 
-    const isAllAnswered =   (yesQ1Checked || noQ1Checked) && (yesQ2Checked || noQ2Checked) && (yesQ3Checked || noQ3Checked) && (yesQ4Checked || noQ4Checked);
+  const isAllAnswered =
+    (yesQ1Checked || noQ1Checked) &&
+    (yesQ2Checked || noQ2Checked) &&
+    (yesQ3Checked || noQ3Checked) &&
+    (yesQ4Checked || noQ4Checked);
 
   return (
     <View style={styles.container}>
@@ -221,18 +281,16 @@ const PlantPrefQPage = () => {
           </View>
           <View style={styles.buttonContainer}>
             {isAllAnswered && (
-              <TouchableOpacity
-                style={styles.button}
-              >
-                <Text style={styles.buttonText}>Submit </Text>
+              <TouchableOpacity style={styles.button}>
+                <Text style={styles.buttonText} onPress={sendPreferences}>
+                  Submit{" "}
+                </Text>
               </TouchableOpacity>
             )}
           </View>
         </View>
       )}
-        
     </View>
-    
   );
 };
 
