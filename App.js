@@ -5,6 +5,7 @@ import HomeScreen from "./component/HomeScreen";
 import PlantPrefPage from "./pages/PlantPrefPage"; 
 import PlantPrefQPage from './pages/PlantPrefQPage';
 import PlantPreferencePage from "./pages/PlantPreferencePage";
+import FlowerDetails from './pages/FlowerDetailsPage';
 
 const Stack = createStackNavigator();
 
@@ -16,6 +17,7 @@ const App = () => {
         <Stack.Screen name="PlantPrefPage" component={PlantPrefPage} options={{ headerShown: false }}/>
         <Stack.Screen name="PlantPrefQPage" component={PlantPrefQPage} options={{ headerShown: false }}/>
         <Stack.Screen name="PlantPreferencePage" component={PlantPreferencePage} options={{ headerShown: false }}/>
+        <Stack.Screen name="FlowerDetails" component={FlowerDetails} options={{ headerShown: false }}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

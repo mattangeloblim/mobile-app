@@ -27,7 +27,7 @@ const PlantPrefQPage = () => {
     };
 
     try {
-      const response = await fetch("http://54.206.87.142:9001/api/preference", {
+      const response = await fetch("http://54.252.234.41:9001/api/preference", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -40,30 +40,17 @@ const PlantPrefQPage = () => {
       }
       const responseData = await response.json();
 
-      // Use the responseData as needed
-      // console.log('Response:', responseData);
-      // const plantNames = responseData.matchingFlower.map(flower => flower.name)
-      // const plantDescription = responseData.matchingFlower.map(flower => flower.description)
-      // const plantPath = responseData.matchingFlower.map(flower => flower.name)
-
-      // console.log(plantNames);
-      // console.log(plantDescription);
-      // console.log(plantPath)
       const flowerData = responseData.matchingFlower.map(flower => {
         return {
           name: flower.name,
-          description: flower.description,
-          imagePath: flower.imagePath
+          light: flower.light,
+          imagePath: flower.imagePath,
+          id: flower.id,
         };
       });
-
-      // console.log(flowerData)
   
       setFlowers(flowerData);
-
-      console.log(flowers)
-
-      navigation.navigate('PlantPreferencePage', { flowers: flowerData });
+      navigation.navigate('PlantPreferencePage', { flower: flowerData });
     } catch (error) {
       console.error("Error:", error);
     }
