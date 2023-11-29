@@ -36,7 +36,8 @@ export default function HomeScreen() {
           <View style={styles.buttonContainer}>
             <TouchableOpacity
               style={[styles.button, { marginBottom: 10 }]}
-              onPress={() => alert("BOBO SI KYLE")}
+              onPress={() => navigation.navigate("PlantMatchPage")}
+              //onPress={() => alert("BOBO SI KYLE")}
             >
               <Text style={styles.buttonText}>Plant Matching</Text>
             </TouchableOpacity>
