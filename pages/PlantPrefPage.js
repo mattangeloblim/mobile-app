@@ -1,33 +1,50 @@
 import React from "react";
-import { View, Image, StyleSheet, Text, TouchableOpacity } from "react-native";
+import {
+  View,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  ImageBackground,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import Navbar from "../component/Navbar";
 // import { TouchableOpacity } from "react-native";
 
 const PlantPrefPage = () => {
   const navigate = useNavigation();
+
+  const handleBackButton = () => {
+    navigate.goBack();
+  };
+
   return (
-    <View style={styles.container}>
-      <Image
+    <ImageBackground
         source={require("../assets/preference.png")}
         style={styles.backgroundImage}
-      />
-      <View style={styles.centeredContainer}>
-        <View style={styles.mainView}>
-          <Text style={styles.mainViewText}>
-            You are about to answer questions to help in suggesting a suitable
-            indoor plant to take care of, would you like to proceed?
-          </Text>
-        </View>
-        <View style={styles.childView}>
-          <TouchableOpacity onPress={() => navigate.navigate("PlantPrefQPage")}>
-            <Text style={styles.childViewOption}>Continue</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.childView}>
-          <Text style={styles.childViewOption2}>Back</Text>
+    >
+      <View style={styles.container}>
+        <View style={styles.centeredContainer}>
+          <View style={styles.mainView}>
+            <Text style={styles.mainViewText}>
+              You are about to answer questions to help in suggesting a suitable
+              indoor plant to take care of, would you like to proceed?
+            </Text>
+          </View>
+          <View style={styles.childView}>
+            <TouchableOpacity onPress={() => navigate.navigate("PlantPrefQPage")}>
+              <Text style={styles.childViewOption}>Continue</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.childView}>
+            <TouchableOpacity onPress={handleBackButton}>
+              <Text style={styles.childViewOption2}>Back</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
-    </View>
+      <Navbar/>
+    </ImageBackground>
   );
 };
 

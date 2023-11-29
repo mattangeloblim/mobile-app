@@ -20,7 +20,7 @@ export default function Navbar({ onBackPress, onNextPress, onHomePress }) {
 
 const styles = StyleSheet.create({
   container: {
-    alignSelf:"center",
+    alignSelf: "center",
     flexDirection: "row",
     marginBottom: 10,
     marginHorizontal: 20,
