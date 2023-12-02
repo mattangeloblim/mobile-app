@@ -471,6 +471,7 @@ const styles = {
   },
   columnText: {
     fontSize: 18,
+    marginTop: 20,
     fontWeight: "bold",
     color: "green",
   },

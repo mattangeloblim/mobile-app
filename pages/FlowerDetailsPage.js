@@ -53,12 +53,12 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   label: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: "bold",
     marginTop: 10,
   },
   description: {
-    fontSize: 16,
+    fontSize: 14,
     marginTop: 5,
   },
   backgroundImage: {

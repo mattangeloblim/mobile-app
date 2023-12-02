@@ -12,7 +12,7 @@ export default function Navbar() {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity
+      {/* <TouchableOpacity
         onPress={() => navigation.navigate("Home")}
         style={styles.homeButton}
       >
@@ -21,7 +21,7 @@ export default function Navbar() {
 
       <TouchableOpacity onPress={goBack}>
         <Icon name="chevron-left" size={30} color="#fff" />
-      </TouchableOpacity>
+      </TouchableOpacity> */}
     </View>
   );
 }

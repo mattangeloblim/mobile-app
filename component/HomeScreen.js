@@ -15,6 +15,7 @@ import { ref, onValue } from "firebase/database";
 
 export default function HomeScreen() {
   const [sensorData, setSensorData] = useState("");
+  const [showStatus, setShowStatus] = useState(false);
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -49,25 +50,50 @@ export default function HomeScreen() {
               <Icon name="cog" size={20} color="white" style={styles.icon} />
               <Text style={styles.buttonText}>Plant Preference</Text>
             </TouchableOpacity>
+            {!showStatus && (
+              <TouchableOpacity
+                style={styles.button}
+                onPress={() => {
+                  setShowStatus(!showStatus); // Toggle the showStatus state
+                }}
+              >
+                {/* Use ellipsis-h icon for see more */}
+                <Icon name="eye" size={20} color="white" style={styles.icon} />
+                <Text style={styles.buttonText}>Sensor Values</Text>
+              </TouchableOpacity>
+            )}
           </View>
-          <View style={styles.containerText}>
-            <Text style={styles.title}>Air Quality</Text>
-            <Text style={styles.centeredText}>
-              Temperature: {sensorData && sensorData.temperature} °C
-            </Text>
-            <Text style={styles.centeredText}>
-              Humidity: {sensorData && sensorData.humidity} %
-            </Text>
-            <Text style={styles.centeredText}>
-              Heat Index: {sensorData && sensorData.heat_index.toFixed(2)} °C
-            </Text>
-            <Text style={styles.centeredText}>
-              Air Quality Index: {sensorData && sensorData.mq135Value}
-            </Text>
-            <Text style={styles.result}>
-              Air Quality is: {sensorData && sensorData.quality}
-            </Text>
-          </View>
+
+          {showStatus && ( // Conditionally render content based on showStatus
+            <View style={styles.containerText}>
+              <TouchableOpacity
+                style={styles.closeButton}
+                onPress={() => setShowStatus(false)}
+              >
+                <Text style={styles.closeButtonText}>X</Text>
+              </TouchableOpacity>
+              <Text
+                style={styles.title}
+              >
+                Air Quality
+              </Text>
+              <Text style={styles.centeredText}>
+                Temperature: {sensorData && sensorData.temperature} °C
+              </Text>
+              <Text style={styles.centeredText}>
+                Humidity: {sensorData && sensorData.humidity} %
+              </Text>
+              <Text style={styles.centeredText}>
+                Heat Index: {sensorData && sensorData.heat_index.toFixed(2)} °C
+              </Text>
+              <Text style={styles.centeredText}>
+                Air Quality Index: {sensorData && sensorData.mq135Value}
+              </Text>
+              <Text style={styles.result}>
+                Air Quality is: {sensorData && sensorData.quality}
+              </Text>
+            </View>
+          )}
           <StatusBar style="auto" />
         </View>
       </View>
@@ -107,6 +133,7 @@ const styles = StyleSheet.create({
     width: 200,
     alignItems: "center",
     flexDirection: "row",
+    marginBottom: 10
   },
   buttonText: {
     color: "#fff",
@@ -114,6 +141,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   containerText: {
+    position: "relative",
     justifyContent: "flex-start",
     backgroundColor: "rgba(38, 166, 91, 0.4)",
     borderRadius: 10,
@@ -126,11 +154,24 @@ const styles = StyleSheet.create({
     borderColor: "rgba(255, 255, 255, 0.5)",
     alignItems: "center",
   },
+
+  closeButton: {
+    position: "absolute",
+    top: 10,
+    right: 10,
+    padding: 10,
+  },
+  closeButtonText: {
+    color: "white",
+    fontSize: 20,
+    fontWeight: "bold",
+  },
   title: {
     fontSize: 26,
     textAlign: "center",
     fontWeight: "bold",
-    marginBottom: 50,
+    marginBottom: 10,
+    marginTop: 20,
     color: "green",
   },
   centeredText: {

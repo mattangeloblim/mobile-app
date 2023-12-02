@@ -37,7 +37,7 @@ const PlantPrefQPage = () => {
     };
 
     try {
-      const response = await fetch("http://54.252.234.41:9001/api/preference", {
+      const response = await fetch("http://54.252.43.250:9001/api/preference", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
