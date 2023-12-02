@@ -8,7 +8,12 @@ import {
   ActivityIndicator,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
+
 import axios from "axios";
+import Modal from "react-native-modal";
+import Icon from "react-native-vector-icons/FontAwesome";
+
+const API_ENDPOINT = "http://3.27.222.103:8000/predict";
 
 export default function PlantMatchPage() {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -21,6 +26,11 @@ export default function PlantMatchPage() {
   const [prediction2, setPrediction2] = useState(null);
   const [loading2, setLoading2] = useState(false);
 
+  const [mixEnabled, setMixEnabled] = useState(false);
+
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+
   useEffect(() => {
     (async () => {
       const { status } =
@@ -31,15 +41,28 @@ export default function PlantMatchPage() {
     })();
   }, []);
 
+  const classDescriptions = {
+    "Aloe Vera": "Slow",
+    Basil: "Aggressive",
+    "Cabbage Succulent": "Slow",
+    "Chinese Evergreen": "Slow",
+    "Golden Pothos": "Aggressive",
+    "Peace Lily": "Slow",
+    "Rubber Tree": "Aggressive",
+    "Snake Plant": "Slow",
+    "Spider Plant": "Aggressive",
+    "ZZ Plant": "Slow",
+  };
+
   const pickImage = async (plantNumber) => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
+      allowsEditing: false,
       aspect: [4, 3],
       quality: 1,
     });
 
-    if (!result.cancelled) {
+    if (!result.canceled) {
       const uriParts = result.uri.split("/");
       const filename = uriParts[uriParts.length - 1];
 
@@ -53,7 +76,29 @@ export default function PlantMatchPage() {
     }
   };
 
-  const handlePredictClick = (plantNumber) => {
+  const captureImage = async (plantNumber) => {
+    let result = await ImagePicker.launchCameraAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: false,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      const uriParts = result.uri.split("/");
+      const filename = uriParts[uriParts.length - 1];
+
+      if (plantNumber === 1) {
+        setSelectedImage(result.uri);
+        setSelectedImageName(filename);
+      } else if (plantNumber === 2) {
+        setSelectedImage2(result.uri);
+        setSelectedImageName2(filename);
+      }
+    }
+  };
+
+  const handlePredictClick = async (plantNumber) => {
     const selectedImageState =
       plantNumber === 1 ? selectedImage : selectedImage2;
     const selectedImageNameState =
@@ -72,36 +117,88 @@ export default function PlantMatchPage() {
         type: "image/jpeg",
       });
 
-      axios
-        .post("http://3.27.222.103:8000/predict", formData, {
+      try {
+        const response = await axios.post(API_ENDPOINT, formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
-        })
-        .then((response) => {
-          console.log(
-            `Prediction Result for Plant ${plantNumber}:`,
-            response.data
-          );
-
-          const class1 = response.data.class1;
-          const confidence1 = response.data.confidence1;
-
-          if (plantNumber === 1) {
-            setPredictionState({ class1, confidence1 });
-          } else if (plantNumber === 2) {
-            setPrediction2({ class1, confidence1 });
-          }
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        })
-        .finally(() => {
-          setLoadingState(false);
         });
+
+        const currentDate = new Date();
+        console.log(
+          `[${currentDate.toLocaleString()}] Prediction Result for Plant ${plantNumber}:`,
+          response.data
+        );
+
+        const class1 = response.data.class1;
+        const confidence1 = response.data.confidence1;
+        const identification = classDescriptions[class1];
+
+        if (plantNumber === 1) {
+          setPredictionState({ class1, confidence1, identification });
+        } else if (plantNumber === 2) {
+          setPrediction2({ class1, confidence1, identification });
+        }
+
+        if (plantNumber === 1 && prediction2) {
+          setMixEnabled(true);
+        } else if (plantNumber === 2 && prediction) {
+          setMixEnabled(true);
+        }
+      } catch (error) {
+        console.error("Error:", error);
+      } finally {
+        setLoadingState(false);
+      }
     } else {
       console.error(`Please select an image file for Plant ${plantNumber}`);
     }
+  };
+
+  const removeImage = (plantNumber) => {
+    if (plantNumber === 1) {
+      setSelectedImage(null);
+      setSelectedImageName(null);
+      setPrediction(null);
+    } else if (plantNumber === 2) {
+      setSelectedImage2(null);
+      setSelectedImageName2(null);
+      setPrediction2(null);
+    }
+
+    setMixEnabled(false);
+  };
+
+  const handleMatchClick = () => {
+    if (prediction && prediction2) {
+      const identification1 = prediction.identification;
+      const identification2 = prediction2.identification;
+
+      let message = "";
+
+      if (identification1 === identification2) {
+        if (identification1 === "Slow") {
+          message =
+            "The two plants have the same growing habits, thus compatible to take care of at the same time.";
+        } else if (identification1 === "Aggressive") {
+          message =
+            "The two plants have the same growing habits but not compatible due to possible crowding.";
+        }
+      } else {
+        message =
+          "The two plants have different growing habits, thus highly suggested to have enough space between them so they can both grow properly.";
+      }
+
+      setAlertMessage(message);
+      setAlertVisible(true);
+    } else {
+      alert("Please predict images for both plants before matching.");
+    }
+  };
+
+  const handleModalClose = () => {
+    setAlertVisible(false);
+    setAlertMessage("");
   };
 
   return (
@@ -111,20 +208,68 @@ export default function PlantMatchPage() {
     >
       <View style={styles.container}>
         <View style={styles.content}>
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity
-              style={[styles.button, { marginBottom: 10 }]}
-              onPress={() => pickImage(1)}
-            >
-              <Text style={styles.buttonText}>Select Image for Plant 1</Text>
-            </TouchableOpacity>
+          <View style={styles.buttonGroup}>
+            <View style={styles.column}>
+              <Text style={styles.columnText}>Plant 1</Text>
+              <TouchableOpacity
+                style={[styles.button, { marginBottom: 10 }]}
+                onPress={() => pickImage(1)}
+                disabled={loading}
+              >
+                <Icon
+                  name="upload"
+                  size={20}
+                  color="white"
+                  style={styles.icon}
+                />
+                <Text style={styles.buttonText}> Upload Image</Text>
+              </TouchableOpacity>
 
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => pickImage(2)}
-            >
-              <Text style={styles.buttonText}>Select Image for Plant 2</Text>
-            </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.button, { marginBottom: 10 }]}
+                onPress={() => captureImage(1)}
+                disabled={loading}
+              >
+                <Icon
+                  name="camera"
+                  size={20}
+                  color="white"
+                  style={styles.icon}
+                />
+                <Text style={styles.buttonText}> Capture Photo</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={{ width: 20 }} />
+            <View style={styles.column}>
+              <Text style={styles.columnText}>Plant 2</Text>
+              <TouchableOpacity
+                style={[styles.button, { marginBottom: 10 }]}
+                onPress={() => pickImage(2)}
+                disabled={loading2}
+              >
+                <Icon
+                  name="upload"
+                  size={20}
+                  color="white"
+                  style={styles.icon}
+                />
+                <Text style={styles.buttonText}> Upload Image</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[styles.button, { marginBottom: 10 }]}
+                onPress={() => captureImage(2)}
+                disabled={loading}
+              >
+                <Icon
+                  name="camera"
+                  size={20}
+                  color="white"
+                  style={styles.icon}
+                />
+                <Text style={styles.buttonText}> Capture Photo</Text>
+              </TouchableOpacity>
+            </View>
           </View>
 
           <View style={styles.containerText}>
@@ -136,65 +281,112 @@ export default function PlantMatchPage() {
                   <>
                     <Image
                       source={{ uri: selectedImage }}
-                      style={{ width: 200, height: 200, marginTop: 20 }}
+                      style={styles.selectedImage}
                     />
-                    {/* {selectedImageName && (
-                      <Text style={{ marginTop: 10 }}>
-                        Selected Image Name: {selectedImageName}
-                      </Text>
-                    )} */}
+                    <TouchableOpacity
+                      style={styles.removeButton}
+                      onPress={() => removeImage(1)}
+                    >
+                      <Icon
+                        name="times"
+                        size={20}
+                        color="white"
+                        style={styles.icon}
+                      />
+                    </TouchableOpacity>
                     <View style={styles.buttonContainer}>
-                      {loading && (
-                        <ActivityIndicator size="large" color="green" />
-                      )}
                       <TouchableOpacity
                         style={[styles.button, { marginBottom: 10 }]}
                         onPress={() => handlePredictClick(1)}
                         disabled={loading}
                       >
-                        <Text style={styles.buttonText}>Predict Image</Text>
+                        {loading ? (
+                          <ActivityIndicator size="small" color="white" />
+                        ) : (
+                          <>
+                            <Icon
+                              name="refresh"
+                              size={20}
+                              color="white"
+                              style={styles.icon}
+                            />
+                            <Text style={styles.buttonText}>Predict Image</Text>
+                          </>
+                        )}
                       </TouchableOpacity>
 
                       {prediction && (
-                        <Text style={styles.description}>
-                          {prediction.class1}{" "}
-                          {prediction.confidence1.toFixed(2)}
-                        </Text>
+                        <>
+                          <Text style={styles.label}>
+                            {prediction.class1}
+                            {"\n"} {"("}
+                            {prediction.confidence1.toFixed(2)}
+                            {"%)"}
+                          </Text>
+                          {prediction.identification && (
+                            <Text style={styles.description}>
+                              Growing Habit: {prediction.identification}
+                            </Text>
+                          )}
+                        </>
                       )}
                     </View>
                   </>
                 )}
               </View>
-
               <View style={styles.imageWithLabel}>
                 {selectedImage2 && (
                   <>
                     <Image
                       source={{ uri: selectedImage2 }}
-                      style={{ width: 200, height: 200, marginTop: 20 }}
+                      style={styles.selectedImage}
                     />
-                    {/* {selectedImageName2 && (
-                      <Text style={{ marginTop: 10 }}>
-                        Selected Image Name: {selectedImageName2}
-                      </Text>
-                    )} */}
+                    <TouchableOpacity
+                      style={styles.removeButton}
+                      onPress={() => removeImage(2)}
+                    >
+                      <Icon
+                        name="times"
+                        size={20}
+                        color="white"
+                        style={styles.icon}
+                      />
+                    </TouchableOpacity>
                     <View style={styles.buttonContainer}>
-                      {loading2 && (
-                        <ActivityIndicator size="large" color="green" />
-                      )}
                       <TouchableOpacity
                         style={[styles.button, { marginBottom: 10 }]}
                         onPress={() => handlePredictClick(2)}
                         disabled={loading2}
                       >
-                        <Text style={styles.buttonText}>Predict Image</Text>
+                        {loading2 ? (
+                          <ActivityIndicator size="small" color="white" />
+                        ) : (
+                          <>
+                            <Icon
+                              name="refresh"
+                              size={20}
+                              color="white"
+                              style={styles.icon}
+                            />
+                            <Text style={styles.buttonText}>Predict Image</Text>
+                          </>
+                        )}
                       </TouchableOpacity>
 
                       {prediction2 && (
-                        <Text style={styles.description}>
-                          {prediction2.class1}{" "}
-                          {prediction2.confidence1.toFixed(2)}
-                        </Text>
+                        <>
+                          <Text style={styles.label}>
+                            {prediction2.class1}
+                            {"\n"} {"("}
+                            {prediction2.confidence1.toFixed(2)}
+                            {"%)"}
+                          </Text>
+                          {prediction2.identification && (
+                            <Text style={styles.description}>
+                              Growing Habit:{prediction2.identification}
+                            </Text>
+                          )}
+                        </>
                       )}
                     </View>
                   </>
@@ -203,6 +395,33 @@ export default function PlantMatchPage() {
             </View>
           </View>
         </View>
+
+        <TouchableOpacity
+          style={[
+            styles.button,
+            {
+              marginTop: 20,
+              backgroundColor: mixEnabled ? "green" : "lightgrey",
+            },
+          ]}
+          onPress={handleMatchClick}
+          disabled={!mixEnabled}
+        >
+          <Icon name="random" size={20} color="white" />
+        </TouchableOpacity>
+
+        <Modal isVisible={alertVisible} onBackdropPress={handleModalClose}>
+          <View style={styles.modalContainer}>
+            <Text style={styles.modalTitle}>MATCH PREDICTION RESULT</Text>
+            <Text style={styles.modalText}>{alertMessage}</Text>
+            <TouchableOpacity
+              onPress={handleModalClose}
+              style={styles.modalButton}
+            >
+              <Text style={styles.modalButtonText}>OKAY</Text>
+            </TouchableOpacity>
+          </View>
+        </Modal>
       </View>
     </ImageBackground>
   );
@@ -223,41 +442,54 @@ const styles = {
     alignItems: "center",
   },
   buttonContainer: {
-    marginTop: 20,
+    marginTop: 0,
     alignItems: "center",
   },
   button: {
     backgroundColor: "green",
     padding: 10,
     borderRadius: 5,
-  },
-  clearButton: {
-    color: "white",
-    backgroundColor: "red",
-    padding: 10,
-    borderRadius: 5,
-    marginTop: 20,
-    fontWeight: "bold",
+    flexDirection: "row",
+    alignItems: "center",
   },
   buttonText: {
     fontSize: 16,
     fontWeight: "bold",
     color: "white",
   },
+  buttonGroup: {
+    flexDirection: "row",
+    marginTop: 0,
+    padding: 20,
+    alignItems: "center",
+    justifyContent: "space-around",
+  },
+  column: {
+    alignItems: "center",
+  },
+  columnText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "green",
+  },
   selectedImage: {
+    justifyContent: "flex-start",
     width: 200,
     height: 200,
     marginTop: 10,
+    marginLeft: 10,
+    marginRight: 10,
+    marginBottom: 10,
     borderWidth: 2,
-    borderColor: "white",
+    borderColor: "green",
   },
   containerText: {
-    justifyContent: "center",
+    justifyContent: "flex-start",
     alignItems: "center",
     backgroundColor: "rgba(38, 166, 91, 0.4)",
     borderRadius: 10,
     padding: 20,
-    marginTop: 50,
+    marginTop: 20,
     width: "90%",
     alignSelf: "center",
     borderWidth: 1,
@@ -278,16 +510,59 @@ const styles = {
   },
   imageWithLabel: {
     alignItems: "center",
+    flex: 1,
+    height: 350,
   },
   label: {
-    fontSize: 18,
+    fontSize: 16,
     marginTop: 10,
     color: "green",
     fontWeight: "bold",
+    textAlign: "center",
   },
   description: {
     color: "green",
     marginTop: 5,
     textAlign: "center",
+    fontSize: 14,
+  },
+  icon: {
+    marginRight: 5,
+  },
+  removeButton: {
+    position: "absolute",
+    top: 5,
+    right: -10,
+    backgroundColor: "red",
+    padding: 5,
+    borderRadius: 50,
+    zIndex: 1,
+  },
+  modalContainer: {
+    backgroundColor: "white",
+    padding: 20,
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  modalTitle: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 10,
+    color: "green",
+  },
+  modalText: {
+    fontSize: 18,
+    marginBottom: 10,
+    textAlign: "center",
+  },
+  modalButton: {
+    backgroundColor: "green",
+    padding: 10,
+    borderRadius: 5,
+    alignItems: "center",
+  },
+  modalButtonText: {
+    color: "white",
+    fontWeight: "bold",
   },
 };
