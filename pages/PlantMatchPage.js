@@ -73,7 +73,7 @@ export default function PlantMatchPage() {
       });
 
       axios
-        .post("http://13.211.149.213:8000/predict", formData, {
+        .post("http://3.27.222.103:8000/predict", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
