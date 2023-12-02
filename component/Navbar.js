@@ -1,31 +1,44 @@
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, TouchableOpacity, StyleSheet } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
+import { useNavigation } from "@react-navigation/native";
 
-export default function Navbar({ onBackPress, onNextPress, onHomePress }) {
+export default function Navbar() {
+  const navigation = useNavigation();
+
+  const goBack = () => {
+    navigation.goBack();
+  };
+
   return (
     <View style={styles.container}>
-      {/* <TouchableOpacity onPress={onBackPress}>
-        <Icon name="chevron-left" size={30} color="#fff" />
-      </TouchableOpacity> */}
-      <TouchableOpacity onPress={onHomePress}>
+      <TouchableOpacity
+        onPress={() => navigation.navigate("Home")}
+        style={styles.homeButton}
+      >
         <Icon name="home" size={30} color="#fff" />
       </TouchableOpacity>
-      {/* <TouchableOpacity onPress={onNextPress}>
-        <Icon name="chevron-right" size={30} color="#fff" />
-      </TouchableOpacity> */}
+
+      <TouchableOpacity onPress={goBack}>
+        <Icon name="chevron-left" size={30} color="#fff" />
+      </TouchableOpacity>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    alignSelf: "center",
+    position: "absolute",
+    bottom: 20,
+    right: 20,
     flexDirection: "row",
-    marginBottom: 10,
-    marginHorizontal: 20,
-    justifyContent: "space-between",
+    justifyContent: "center",
+    alignItems: "flex-end",
     backgroundColor: "transparent",
-    padding: 10,
+    padding: 20,
+  },
+  homeButton: {
+    alignSelf: "center",
+    marginHorizontal: 150, // Adjust if needed
   },
 });

@@ -8,8 +8,8 @@ import {
   ImageBackground,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import Navbar from "./Navbar";
 // import { firebase } from "@react-native-firebase/app";
+import Icon from "react-native-vector-icons/FontAwesome";
 import { db } from "../config";
 import { ref, onValue } from "firebase/database";
 
@@ -37,14 +37,16 @@ export default function HomeScreen() {
             <TouchableOpacity
               style={[styles.button, { marginBottom: 10 }]}
               onPress={() => navigation.navigate("PlantMatchPage")}
-              //onPress={() => alert("BOBO SI KYLE")}
             >
+              <Icon name="magic" size={20} color="white" style={styles.icon} />
               <Text style={styles.buttonText}>Plant Matching</Text>
             </TouchableOpacity>
+
             <TouchableOpacity
               style={styles.button}
               onPress={() => navigation.navigate("PlantPrefPage")}
             >
+              <Icon name="cog" size={20} color="white" style={styles.icon} />
               <Text style={styles.buttonText}>Plant Preference</Text>
             </TouchableOpacity>
           </View>
@@ -69,7 +71,6 @@ export default function HomeScreen() {
           <StatusBar style="auto" />
         </View>
       </View>
-      <Navbar />
     </ImageBackground>
   );
 }
@@ -85,7 +86,7 @@ const styles = StyleSheet.create({
   content: {
     // borderWidth: 2,
     // borderColor: "red",
-    height: "80%",
+    height: "85%",
     display: "flex",
     justifyContent: "space-between",
   },
@@ -105,6 +106,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     width: 200,
     alignItems: "center",
+    flexDirection: "row",
   },
   buttonText: {
     color: "#fff",
@@ -122,14 +124,16 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     borderWidth: 1,
     borderColor: "rgba(255, 255, 255, 0.5)",
+    alignItems: "center",
   },
   title: {
     fontSize: 26,
     textAlign: "center",
     fontWeight: "bold",
+    marginBottom: 50,
+    color: "green",
   },
   centeredText: {
-    // justifyContent: "justify",
     fontWeight: "bold",
     color: "white",
     fontSize: 18,
@@ -140,5 +144,8 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: "white",
     fontWeight: "bold",
+  },
+  icon: {
+    marginRight: 5,
   },
 });

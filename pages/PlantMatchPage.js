@@ -8,10 +8,10 @@ import {
   ActivityIndicator,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
-
 import axios from "axios";
 import Modal from "react-native-modal";
 import Icon from "react-native-vector-icons/FontAwesome";
+import Navbar from "../component/Navbar";
 
 const API_ENDPOINT = "http://3.27.222.103:8000/predict";
 
@@ -203,7 +203,7 @@ export default function PlantMatchPage() {
 
   return (
     <ImageBackground
-      source={require("../assets/home.png")}
+      source={require("../assets/matchIt.png")}
       style={styles.backgroundImage}
     >
       <View style={styles.container}>
@@ -423,6 +423,7 @@ export default function PlantMatchPage() {
           </View>
         </Modal>
       </View>
+      <Navbar />
     </ImageBackground>
   );
 }
@@ -437,6 +438,7 @@ const styles = {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    width: "100%",
   },
   content: {
     alignItems: "center",
@@ -459,7 +461,7 @@ const styles = {
   },
   buttonGroup: {
     flexDirection: "row",
-    marginTop: 0,
+    marginTop: 30,
     padding: 20,
     alignItems: "center",
     justifyContent: "space-around",
@@ -490,12 +492,12 @@ const styles = {
     borderRadius: 10,
     padding: 20,
     marginTop: 20,
-    width: "90%",
     alignSelf: "center",
     borderWidth: 1,
     borderColor: "rgba(255, 255, 255, 0.5)",
     minHeight: 450,
-    minWidth: 450,
+    minWidth: 430,
+    minWidth: "100%",
   },
   title: {
     fontSize: 32,

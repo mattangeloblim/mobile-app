@@ -1,7 +1,14 @@
 import React, { useState } from "react";
-import { View, Image, StyleSheet, Text, TouchableOpacity } from "react-native";
-import { useNavigation } from '@react-navigation/native';
-// import Navbar from "../component/Navbar";
+import {
+  View,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  ImageBackground,
+} from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import Navbar from "../component/Navbar";
 
 const PlantPrefQPage = () => {
   const navigation = useNavigation();
@@ -17,6 +24,9 @@ const PlantPrefQPage = () => {
 
   const [flowers, setFlowers] = useState([]);
 
+  const handleBackButton = () => {
+    navigate.goBack();
+  };
 
   const sendPreferences = async () => {
     const requestBody = {
@@ -40,7 +50,7 @@ const PlantPrefQPage = () => {
       }
       const responseData = await response.json();
 
-      const flowerData = responseData.matchingFlower.map(flower => {
+      const flowerData = responseData.matchingFlower.map((flower) => {
         return {
           name: flower.name,
           light: flower.light,
@@ -48,9 +58,9 @@ const PlantPrefQPage = () => {
           id: flower.id,
         };
       });
-  
+
       setFlowers(flowerData);
-      navigation.navigate('PlantPreferencePage', { flower: flowerData });
+      navigation.navigate("PlantPreferencePage", { flower: flowerData });
     } catch (error) {
       console.error("Error:", error);
     }
@@ -67,217 +77,432 @@ const PlantPrefQPage = () => {
     (yesQ3Checked || noQ3Checked) &&
     (yesQ4Checked || noQ4Checked);
 
+  // return (
+  //   <View style={styles.container}>
+  //     <ImageBackground
+  //       source={require("../assets/questionBg.png")}
+  //       style={styles.backgroundImage}
+  //     >
+  //       {!nextPage && (
+  //         <View>
+  //           <View style={styles.centeredContainer}>
+  //             <View style={styles.mainView}>
+  //               <View style={styles.subView}>
+  //                 <Text style={styles.textSubView}>About your space</Text>
+  //               </View>
+  //               <Text style={styles.mainViewText}>
+  //                 Does your indoor space get enough sunlight?
+  //               </Text>
+  //             </View>
+  //             <View style={styles.checkboxContainer}>
+  //               <TouchableOpacity
+  //                 style={[
+  //                   styles.checkbox,
+  //                   yesQ1Checked && styles.checkedCheckbox,
+  //                   yesQ1Checked && { backgroundColor: "#698B59" },
+  //                 ]}
+  //                 onPress={() => {
+  //                   setYesQ1Checked(true);
+  //                   setNoQ1Checked(false);
+  //                 }}
+  //               >
+  //                 <Text style={styles.checkboxText}>
+  //                   {yesQ1Checked ? "✓" : ""} Yes
+  //                 </Text>
+  //               </TouchableOpacity>
+  //               <TouchableOpacity
+  //                 style={[
+  //                   styles.checkbox,
+  //                   noQ1Checked && styles.checkedCheckbox,
+  //                   noQ1Checked && { backgroundColor: "#698B59" },
+  //                 ]}
+  //                 onPress={() => {
+  //                   setYesQ1Checked(false);
+  //                   setNoQ1Checked(true);
+  //                 }}
+  //               >
+  //                 <Text style={styles.checkboxText}>
+  //                   {noQ1Checked ? "✓" : ""} No
+  //                 </Text>
+  //               </TouchableOpacity>
+  //             </View>
+  //           </View>
+  //           <View style={styles.centeredContainer}>
+  //             <View style={styles.mainView}>
+  //               <Text style={styles.mainViewText}>
+  //                 Is your indoor space properly ventilated?
+  //               </Text>
+  //             </View>
+  //             <View style={styles.checkboxContainer}>
+  //               <TouchableOpacity
+  //                 style={[
+  //                   styles.checkbox,
+  //                   yesQ2Checked && styles.checkedCheckbox,
+  //                   yesQ2Checked && { backgroundColor: "#698B59" },
+  //                 ]}
+  //                 onPress={() => {
+  //                   setYesQ2Checked(true);
+  //                   setNoQ2Checked(false);
+  //                 }}
+  //               >
+  //                 <Text style={styles.checkboxText}>
+  //                   {yesQ2Checked ? "✓" : ""} Yes
+  //                 </Text>
+  //               </TouchableOpacity>
+  //               <TouchableOpacity
+  //                 style={[
+  //                   styles.checkbox,
+  //                   noQ2Checked && styles.checkedCheckbox,
+  //                   noQ2Checked && { backgroundColor: "#698B59" },
+  //                 ]}
+  //                 onPress={() => {
+  //                   setYesQ2Checked(false);
+  //                   setNoQ2Checked(true);
+  //                 }}
+  //               >
+  //                 <Text style={styles.checkboxText}>
+  //                   {noQ2Checked ? "✓" : ""} No
+  //                 </Text>
+  //               </TouchableOpacity>
+  //             </View>
+  //           </View>
+  //           <TouchableOpacity
+  //             style={styles.buttonContainer}
+  //             onPress={() => {
+  //               setNextPage(true);
+  //             }}
+  //           >
+  //             {isBothQuestionsAnswered && (
+  //               <View style={styles.button}>
+  //                 <Text style={styles.buttonText}>Next {">>"}</Text>
+  //               </View>
+  //             )}
+  //           </TouchableOpacity>
+  //         </View>
+  //       )}
+  //       {nextPage && (
+  //         <View>
+  //           <View style={styles.centeredContainer}>
+  //             <View style={styles.mainView}>
+  //               <View style={styles.subView}>
+  //                 <Text style={styles.textSubView}>About your preference</Text>
+  //               </View>
+  //               <Text style={styles.mainViewText}>
+  //                 Do you prefer an indoor plant that needs to be watered
+  //                 frequently?
+  //               </Text>
+  //             </View>
+  //             <View style={styles.checkboxContainer}>
+  //               <TouchableOpacity
+  //                 style={[
+  //                   styles.checkbox,
+  //                   yesQ3Checked && styles.checkedCheckbox,
+  //                   yesQ3Checked && { backgroundColor: "#698B59" },
+  //                 ]}
+  //                 onPress={() => {
+  //                   setYesQ3Checked(true);
+  //                   setNoQ3Checked(false);
+  //                 }}
+  //               >
+  //                 <Text style={styles.checkboxText}>
+  //                   {yesQ1Checked ? "✓" : ""} Yes
+  //                 </Text>
+  //               </TouchableOpacity>
+  //               <TouchableOpacity
+  //                 style={[
+  //                   styles.checkbox,
+  //                   noQ3Checked && styles.checkedCheckbox,
+  //                   noQ3Checked && { backgroundColor: "#698B59" },
+  //                 ]}
+  //                 onPress={() => {
+  //                   setYesQ3Checked(false);
+  //                   setNoQ3Checked(true);
+  //                 }}
+  //               >
+  //                 <Text style={styles.checkboxText}>
+  //                   {noQ1Checked ? "✓" : ""} No
+  //                 </Text>
+  //               </TouchableOpacity>
+  //             </View>
+  //           </View>
+  //           <View style={styles.centeredContainer}>
+  //             <View style={styles.mainView}>
+  //               <Text style={styles.mainViewText}>
+  //                 Do you prefer a flower-bearing plant?
+  //               </Text>
+  //             </View>
+  //             <View style={styles.checkboxContainer}>
+  //               <TouchableOpacity
+  //                 style={[
+  //                   styles.checkbox,
+  //                   yesQ4Checked && styles.checkedCheckbox,
+  //                   yesQ4Checked && { backgroundColor: "#698B59" },
+  //                 ]}
+  //                 onPress={() => {
+  //                   setYesQ4Checked(true);
+  //                   setNoQ4Checked(false);
+  //                 }}
+  //               >
+  //                 <Text style={styles.checkboxText}>
+  //                   {yesQ2Checked ? "✓" : ""} Yes
+  //                 </Text>
+  //               </TouchableOpacity>
+  //               <TouchableOpacity
+  //                 style={[
+  //                   styles.checkbox,
+  //                   noQ4Checked && styles.checkedCheckbox,
+  //                   noQ4Checked && { backgroundColor: "#698B59" },
+  //                 ]}
+  //                 onPress={() => {
+  //                   setYesQ4Checked(false);
+  //                   setNoQ4Checked(true);
+  //                 }}
+  //               >
+  //                 <Text style={styles.checkboxText}>
+  //                   {noQ4Checked ? "✓" : ""} No
+  //                 </Text>
+  //               </TouchableOpacity>
+  //             </View>
+  //           </View>
+  //           <View style={styles.buttonContainer}>
+  //             {isBothQuestionsAnswered && (
+  //               <TouchableOpacity
+  //                 style={styles.button}
+  //                 onPress={() => {
+  //                   setNextPage(false);
+  //                 }}
+  //               >
+  //                 <Text style={styles.buttonText}>{"<< "}Back </Text>
+  //               </TouchableOpacity>
+  //             )}
+  //           </View>
+  //           <View style={styles.buttonContainer}>
+  //             {isAllAnswered && (
+  //               <TouchableOpacity style={styles.button}>
+  //                 <Text style={styles.buttonText} onPress={sendPreferences}>
+  //                   Submit{" "}
+  //                 </Text>
+  //               </TouchableOpacity>
+  //             )}
+  //           </View>
+  //         </View>
+  //       )}
+  //     </ImageBackground>
+  //   </View>
+  // );
   return (
-    <View style={styles.container}>
-      <Image
-        source={require("../assets/questionBg.png")}
-        style={styles.backgroundImage}
-      />
-      {!nextPage && (
-        <View>
-          <View style={styles.centeredContainer}>
-            <View style={styles.mainView}>
-              <View style={styles.subView}>
-                <Text style={styles.textSubView}>About your space</Text>
+    <ImageBackground
+      source={require("../assets/questionBg.png")}
+      style={styles.backgroundImage}
+    >
+      <View style={styles.container}>
+        {!nextPage && (
+          <View>
+            <View style={styles.centeredContainer}>
+              <View style={styles.mainView}>
+                <View style={styles.subView}>
+                  <Text style={styles.textSubView}>About your space</Text>
+                </View>
+                <Text style={styles.mainViewText}>
+                  Does your indoor space get enough sunlight?
+                </Text>
               </View>
-              <Text style={styles.mainViewText}>
-                Does your indoor space get enough sunlight?
-              </Text>
-            </View>
-            <View style={styles.checkboxContainer}>
-              <TouchableOpacity
-                style={[
-                  styles.checkbox,
-                  yesQ1Checked && styles.checkedCheckbox,
-                  yesQ1Checked && { backgroundColor: "#698B59" },
-                ]}
-                onPress={() => {
-                  setYesQ1Checked(true);
-                  setNoQ1Checked(false);
-                }}
-              >
-                <Text style={styles.checkboxText}>
-                  {yesQ1Checked ? "✓" : ""} Yes
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[
-                  styles.checkbox,
-                  noQ1Checked && styles.checkedCheckbox,
-                  noQ1Checked && { backgroundColor: "#698B59" },
-                ]}
-                onPress={() => {
-                  setYesQ1Checked(false);
-                  setNoQ1Checked(true);
-                }}
-              >
-                <Text style={styles.checkboxText}>
-                  {noQ1Checked ? "✓" : ""} No
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-          <View style={styles.centeredContainer}>
-            <View style={styles.mainView}>
-              <Text style={styles.mainViewText}>
-                Is your indoor space properly ventilated?
-              </Text>
-            </View>
-            <View style={styles.checkboxContainer}>
-              <TouchableOpacity
-                style={[
-                  styles.checkbox,
-                  yesQ2Checked && styles.checkedCheckbox,
-                  yesQ2Checked && { backgroundColor: "#698B59" },
-                ]}
-                onPress={() => {
-                  setYesQ2Checked(true);
-                  setNoQ2Checked(false);
-                }}
-              >
-                <Text style={styles.checkboxText}>
-                  {yesQ2Checked ? "✓" : ""} Yes
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[
-                  styles.checkbox,
-                  noQ2Checked && styles.checkedCheckbox,
-                  noQ2Checked && { backgroundColor: "#698B59" },
-                ]}
-                onPress={() => {
-                  setYesQ2Checked(false);
-                  setNoQ2Checked(true);
-                }}
-              >
-                <Text style={styles.checkboxText}>
-                  {noQ2Checked ? "✓" : ""} No
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-          <TouchableOpacity
-            style={styles.buttonContainer}
-            onPress={() => {
-              setNextPage(true);
-            }}
-          >
-            {isBothQuestionsAnswered && (
-              <View style={styles.button}>
-                <Text style={styles.buttonText}>Next {">>"}</Text>
+              <View style={styles.checkboxContainer}>
+                <TouchableOpacity
+                  style={[
+                    styles.checkbox,
+                    yesQ1Checked && styles.checkedCheckbox,
+                    yesQ1Checked && { backgroundColor: "#698B59" },
+                  ]}
+                  onPress={() => {
+                    setYesQ1Checked(true);
+                    setNoQ1Checked(false);
+                  }}
+                >
+                  <Text style={styles.checkboxText}>
+                    {yesQ1Checked ? "✓" : ""} Yes
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[
+                    styles.checkbox,
+                    noQ1Checked && styles.checkedCheckbox,
+                    noQ1Checked && { backgroundColor: "#698B59" },
+                  ]}
+                  onPress={() => {
+                    setYesQ1Checked(false);
+                    setNoQ1Checked(true);
+                  }}
+                >
+                  <Text style={styles.checkboxText}>
+                    {noQ1Checked ? "✓" : ""} No
+                  </Text>
+                </TouchableOpacity>
               </View>
-            )}
-          </TouchableOpacity>
-        </View>
-      )}
-      {nextPage && (
-        <View>
-          <View style={styles.centeredContainer}>
-            <View style={styles.mainView}>
-              <View style={styles.subView}>
-                <Text style={styles.textSubView}>About your preference</Text>
+            </View>
+            <View style={styles.centeredContainer}>
+              <View style={styles.mainView}>
+                <Text style={styles.mainViewText}>
+                  Is your indoor space properly ventilated?
+                </Text>
               </View>
-              <Text style={styles.mainViewText}>
-                Do you prefer an indoor plant that needs to be watered
-                frequently?
-              </Text>
+              <View style={styles.checkboxContainer}>
+                <TouchableOpacity
+                  style={[
+                    styles.checkbox,
+                    yesQ2Checked && styles.checkedCheckbox,
+                    yesQ2Checked && { backgroundColor: "#698B59" },
+                  ]}
+                  onPress={() => {
+                    setYesQ2Checked(true);
+                    setNoQ2Checked(false);
+                  }}
+                >
+                  <Text style={styles.checkboxText}>
+                    {yesQ2Checked ? "✓" : ""} Yes
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[
+                    styles.checkbox,
+                    noQ2Checked && styles.checkedCheckbox,
+                    noQ2Checked && { backgroundColor: "#698B59" },
+                  ]}
+                  onPress={() => {
+                    setYesQ2Checked(false);
+                    setNoQ2Checked(true);
+                  }}
+                >
+                  <Text style={styles.checkboxText}>
+                    {noQ2Checked ? "✓" : ""} No
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </View>
-            <View style={styles.checkboxContainer}>
-              <TouchableOpacity
-                style={[
-                  styles.checkbox,
-                  yesQ3Checked && styles.checkedCheckbox,
-                  yesQ3Checked && { backgroundColor: "#698B59" },
-                ]}
-                onPress={() => {
-                  setYesQ3Checked(true);
-                  setNoQ3Checked(false);
-                }}
-              >
-                <Text style={styles.checkboxText}>
-                  {yesQ1Checked ? "✓" : ""} Yes
+            <TouchableOpacity
+              style={styles.buttonContainer}
+              onPress={() => {
+                setNextPage(true);
+              }}
+            >
+              {isBothQuestionsAnswered && (
+                <View style={styles.button}>
+                  <Text style={styles.buttonText}>Next {">>"}</Text>
+                </View>
+              )}
+            </TouchableOpacity>
+          </View>
+        )}
+        {nextPage && (
+          <View>
+            <View style={styles.centeredContainer}>
+              <View style={styles.mainView}>
+                <View style={styles.subView}>
+                  <Text style={styles.textSubView}>About your preference</Text>
+                </View>
+                <Text style={styles.mainViewText}>
+                  Do you prefer an indoor plant that needs to be watered
+                  frequently?
                 </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[
-                  styles.checkbox,
-                  noQ3Checked && styles.checkedCheckbox,
-                  noQ3Checked && { backgroundColor: "#698B59" },
-                ]}
-                onPress={() => {
-                  setYesQ3Checked(false);
-                  setNoQ3Checked(true);
-                }}
-              >
-                <Text style={styles.checkboxText}>
-                  {noQ1Checked ? "✓" : ""} No
+              </View>
+              <View style={styles.checkboxContainer}>
+                <TouchableOpacity
+                  style={[
+                    styles.checkbox,
+                    yesQ3Checked && styles.checkedCheckbox,
+                    yesQ3Checked && { backgroundColor: "#698B59" },
+                  ]}
+                  onPress={() => {
+                    setYesQ3Checked(true);
+                    setNoQ3Checked(false);
+                  }}
+                >
+                  <Text style={styles.checkboxText}>
+                    {yesQ1Checked ? "✓" : ""} Yes
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[
+                    styles.checkbox,
+                    noQ3Checked && styles.checkedCheckbox,
+                    noQ3Checked && { backgroundColor: "#698B59" },
+                  ]}
+                  onPress={() => {
+                    setYesQ3Checked(false);
+                    setNoQ3Checked(true);
+                  }}
+                >
+                  <Text style={styles.checkboxText}>
+                    {noQ1Checked ? "✓" : ""} No
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+            <View style={styles.centeredContainer}>
+              <View style={styles.mainView}>
+                <Text style={styles.mainViewText}>
+                  Do you prefer a flower-bearing plant?
                 </Text>
-              </TouchableOpacity>
+              </View>
+              <View style={styles.checkboxContainer}>
+                <TouchableOpacity
+                  style={[
+                    styles.checkbox,
+                    yesQ4Checked && styles.checkedCheckbox,
+                    yesQ4Checked && { backgroundColor: "#698B59" },
+                  ]}
+                  onPress={() => {
+                    setYesQ4Checked(true);
+                    setNoQ4Checked(false);
+                  }}
+                >
+                  <Text style={styles.checkboxText}>
+                    {yesQ2Checked ? "✓" : ""} Yes
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[
+                    styles.checkbox,
+                    noQ4Checked && styles.checkedCheckbox,
+                    noQ4Checked && { backgroundColor: "#698B59" },
+                  ]}
+                  onPress={() => {
+                    setYesQ4Checked(false);
+                    setNoQ4Checked(true);
+                  }}
+                >
+                  <Text style={styles.checkboxText}>
+                    {noQ4Checked ? "✓" : ""} No
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+            <View style={styles.buttonContainer}>
+              {isBothQuestionsAnswered && (
+                <TouchableOpacity
+                  style={styles.button}
+                  onPress={() => {
+                    setNextPage(false);
+                  }}
+                >
+                  <Text style={styles.buttonText}>{"<< "}Back </Text>
+                </TouchableOpacity>
+              )}
+            </View>
+            <View style={styles.buttonContainer}>
+              {isAllAnswered && (
+                <TouchableOpacity style={styles.button}>
+                  <Text style={styles.buttonText} onPress={sendPreferences}>
+                    Submit{" "}
+                  </Text>
+                </TouchableOpacity>
+              )}
             </View>
           </View>
-          <View style={styles.centeredContainer}>
-            <View style={styles.mainView}>
-              <Text style={styles.mainViewText}>
-                Do you prefer a flower-bearing plant?
-              </Text>
-            </View>
-            <View style={styles.checkboxContainer}>
-              <TouchableOpacity
-                style={[
-                  styles.checkbox,
-                  yesQ4Checked && styles.checkedCheckbox,
-                  yesQ4Checked && { backgroundColor: "#698B59" },
-                ]}
-                onPress={() => {
-                  setYesQ4Checked(true);
-                  setNoQ4Checked(false);
-                }}
-              >
-                <Text style={styles.checkboxText}>
-                  {yesQ2Checked ? "✓" : ""} Yes
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[
-                  styles.checkbox,
-                  noQ4Checked && styles.checkedCheckbox,
-                  noQ4Checked && { backgroundColor: "#698B59" },
-                ]}
-                onPress={() => {
-                  setYesQ4Checked(false);
-                  setNoQ4Checked(true);
-                }}
-              >
-                <Text style={styles.checkboxText}>
-                  {noQ4Checked ? "✓" : ""} No
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-          <View style={styles.buttonContainer}>
-            {isBothQuestionsAnswered && (
-              <TouchableOpacity
-                style={styles.button}
-                onPress={() => {
-                  setNextPage(false);
-                }}
-              >
-                <Text style={styles.buttonText}>{"<< "}Back </Text>
-              </TouchableOpacity>
-            )}
-          </View>
-          <View style={styles.buttonContainer}>
-            {isAllAnswered && (
-              <TouchableOpacity style={styles.button}>
-                <Text style={styles.buttonText} onPress={sendPreferences}>
-                  Submit{" "}
-                </Text>
-              </TouchableOpacity>
-            )}
-          </View>
-        </View>
-      )}
-    </View>
+        )}
+      </View>
+      <Navbar />
+    </ImageBackground>
   );
 };
 
