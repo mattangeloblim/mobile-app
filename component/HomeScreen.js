@@ -16,6 +16,7 @@ import { ref, onValue } from "firebase/database";
 export default function HomeScreen() {
   const [sensorData, setSensorData] = useState("");
   const [showStatus, setShowStatus] = useState(false);
+  const [highlighted, setHighlighted] = useState(false);
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -24,6 +25,11 @@ export default function HomeScreen() {
       const data = snapshot.val();
       setSensorData(data);
       console.log(data);
+      setHighlighted(true); 
+      const timeout = setTimeout(() => {
+        setHighlighted(false);
+      }, 1000); // Reset highlighted after 1 second
+      return () => clearTimeout(timeout);
     });
   }, []);
 
@@ -77,19 +83,19 @@ export default function HomeScreen() {
               >
                 Air Quality
               </Text>
-              <Text style={styles.centeredText}>
+              <Text style={[styles.centeredText, { color: highlighted ? 'green' : 'white' }]}>
                 Temperature: {sensorData && sensorData.temperature} °C
               </Text>
-              <Text style={styles.centeredText}>
+              <Text style={[styles.centeredText, { color: highlighted ? 'green' : 'white' }]}>
                 Humidity: {sensorData && sensorData.humidity} %
               </Text>
-              <Text style={styles.centeredText}>
+              <Text style={[styles.centeredText, { color: highlighted ? 'green' : 'white' }]}>
                 Heat Index: {sensorData && sensorData.heat_index.toFixed(2)} °C
               </Text>
-              <Text style={styles.centeredText}>
+              <Text style={[styles.centeredText, { color: highlighted ? 'green' : 'white' }]}>
                 Air Quality Index: {sensorData && sensorData.mq135Value}
               </Text>
-              <Text style={styles.result}>
+              <Text style={[styles.result, { color: highlighted ? 'green' : 'white' }]}>
                 Air Quality is: {sensorData && sensorData.quality}
               </Text>
             </View>

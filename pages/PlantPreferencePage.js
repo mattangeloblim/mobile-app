@@ -13,7 +13,7 @@ const PlantPreferencePage = ({ route }) => {
   const handleViewClick = async (id) => {
     try {
       const response = await axios.get(
-        `http://54.252.43.250:9001/api/view/flower?id=${id}`
+        `http://54.252.43.250/api/view/flower?id=${id}`
       );
   
       const flowerData = response.data;
